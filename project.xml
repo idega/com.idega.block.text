@@ -2,7 +2,6 @@
     <extend>../com.idega.core.bundle/block-dependencies.xml</extend>
     <pomVersion>3</pomVersion>
     <name>idegaWeb Text Block</name>
-    <groupId>bundles</groupId>
     <artifactId>com.idega.block.text</artifactId>
     <currentVersion>1.0</currentVersion>
     <organization>
