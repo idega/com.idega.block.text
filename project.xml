@@ -1,8 +1,8 @@
 <project>
     <pomVersion>3</pomVersion>
+    <name>idegaWeb Text Block</name>
     <groupId>com.idega.block</groupId>
-    <artifactId>com.idega.block.login</artifactId>
-    <name>idegaWeb Login Block</name>
+    <artifactId>com.idega.block.text</artifactId>
     <currentVersion>2.0</currentVersion>
     <organization>
         <name>idega software</name>
@@ -28,29 +28,29 @@
     </mailingLists>
     <developers>
         <developer>
-            <id>tryggvil</id>
             <name>Tryggvi Larusson</name>
+            <id>tryggvil</id>
             <email>tryggvi@idega.is</email>
             <organization>idega software</organization>
             <roles/>
         </developer>
         <developer>
-            <id>palli</id>
             <name>Pall Helgason</name>
+            <id>palli</id>
             <email>palli@idega.is</email>
             <organization>idega software</organization>
             <roles/>
         </developer>
         <developer>
-            <id>eiki</id>
             <name>Eirikur Sveinn Hrafnsson</name>
+            <id>eiki</id>
             <email>eiki@idega.is</email>
             <organization>idega software</organization>
             <roles/>
         </developer>
         <developer>
-            <id>laddi</id>
             <name>Thorhallur Helgason</name>
+            <id>laddi</id>
             <email>laddi@idega.is</email>
             <organization>idega software</organization>
             <roles/>
@@ -85,4 +85,5 @@
         <report>maven-file-activity-plugin</report>
         <report>maven-changes-plugin</report>
     </reports>
+    <properties/>
 </project>
