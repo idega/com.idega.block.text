@@ -43,6 +43,13 @@
       <organization>idega software</organization>
       <roles/>
     </developer>
+    <developer>
+      <name>Grimur Jonsson</name>
+      <id>gimmi</id>
+      <email>gimmi@idega.is</email>
+      <organization>idega software</organization>
+      <roles/>
+    </developer>    
   </developers>
   <dependencies>
     <dependency>
