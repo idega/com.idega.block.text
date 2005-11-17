@@ -133,7 +133,7 @@ public class TextEditorWindow extends AbstractChooserWindow{
       	System.out.println("TextEditorWindow : "+chooserParameterName);
       	System.out.println("SELECT_FUNCTION_NAME : "+SELECT_FUNCTION_NAME);
       	System.out.println("sTextId : "+sTextId);
-				getPage(iwc).setOnLoad(SELECT_FUNCTION_NAME + "('" + sTextId + "','" + sTextId + "')");
+				setOnLoad(SELECT_FUNCTION_NAME + "('" + sTextId + "','" + sTextId + "')");
       }
       //else {
 	      if (parentReload) {
