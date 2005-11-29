@@ -209,7 +209,7 @@ public class TextServiceBean extends IBOServiceBean implements TextService{
 		
 			try {
 				Content content = ((ContentHome) getIDOHome(Content.class)).findByPrimaryKey(contentId);
-				content.addFileToContent((ICFile)((ICFileHome)getIDOHome(ICFile.class)).findByPrimaryKey( (fileId)));
+				content.addFileToContent(((ICFileHome)getIDOHome(ICFile.class)).findByPrimaryKey( (fileId)));
 				return true;
 			}
 			catch (IDOAddRelationshipException e) {
