@@ -15,7 +15,6 @@ import com.idega.presentation.ui.AbstractChooser;
  */
 
 public class TextChooser extends AbstractChooser {
-  private String style;
   private Image _chooseButtonImage;
   public static String RELOAD_PARENT_PARAMETER = "tx_no_reload";
   private final static String IW_BUNDLE_IDENTIFIER = "com.idega.block.text";

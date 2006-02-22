@@ -14,7 +14,6 @@ import com.idega.block.text.business.ContentBusiness;
 import com.idega.block.text.business.ContentHelper;
 import com.idega.block.text.business.TextBusiness;
 import com.idega.block.text.business.TextFinder;
-import com.idega.block.text.business.TextHelper;
 import com.idega.block.text.data.LocalizedText;
 import com.idega.block.text.data.TxText;
 import com.idega.core.file.data.ICFile;
@@ -51,8 +50,6 @@ public class TextEditorWindow extends AbstractChooserWindow{
 
   private final static String IW_BUNDLE_IDENTIFIER="com.idega.block.text";
   private boolean isAdmin = false;
-  private boolean update = false;
-  private boolean save = false;
   private int iUserId = -1;
   private int iObjInsId = -1;
   public final static String prmAttribute = "txe_attribute";
@@ -77,9 +74,7 @@ public class TextEditorWindow extends AbstractChooserWindow{
   private static String actDelete = "txea_delete";
   private static String actSave = "txea_save";
   private static String actClose = "txea_close";
-  private static String actUpdate = "txea_update" ;
   private static String actNew = "txea_new";
-  private static String modeNew = "txem_new";
   private static String modeDelete = "txem_delete";
 
   public static final String ONCLICK_FUNCTION_NAME = "textselect";
@@ -87,9 +82,6 @@ public class TextEditorWindow extends AbstractChooserWindow{
   public static final String TEXT_NAME_PARAMETER_NAME = "text_name";
   private boolean parentReload = true;
   private String sTextId = null;
-
-  private TextHelper textHelper;
-
 
   private IWBundle iwb,core;
   private IWResourceBundle iwrb;

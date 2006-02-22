@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+
 import com.idega.block.text.business.ContentFinder;
 import com.idega.block.text.business.ContentHelper;
 import com.idega.block.text.business.TextBusiness;
@@ -27,7 +28,6 @@ import com.idega.core.file.data.ICFile;
 import com.idega.core.localisation.business.ICLocaleBusiness;
 import com.idega.data.IDOLookup;
 import com.idega.idegaweb.IWBundle;
-import com.idega.idegaweb.IWResourceBundle;
 import com.idega.idegaweb.block.presentation.Builderaware;
 import com.idega.presentation.Block;
 import com.idega.presentation.IWContext;
@@ -78,9 +78,7 @@ public class TextReader extends Block implements Builderaware {
 
 	public static String prmTextId = "txtr.textid";
 
-	private IWBundle iwb;
 	private IWBundle iwcb;
-	private IWResourceBundle iwrb;
 	private final static String IW_BUNDLE_IDENTIFIER = "com.idega.block.text";
 	public final static String CACHE_KEY = "tx_text";
 
@@ -102,9 +100,7 @@ public class TextReader extends Block implements Builderaware {
 
 	public void main(IWContext iwc) throws Exception {
 		isAdmin = iwc.hasEditPermission(this);
-		iwb = getBundle(iwc);
 		iwcb = iwc.getIWMainApplication().getBundle(IW_CORE_BUNDLE_IDENTIFIER);
-		iwrb = getResourceBundle(iwc);
 		Locale locale = iwc.getCurrentLocale();
 
 		TxText txText = null;
