@@ -25,6 +25,7 @@ import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWResourceBundle;
+import com.idega.idegaweb.block.presentation.Builderaware;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
 import com.idega.presentation.Table;
@@ -430,7 +431,7 @@ public class TextEditorWindow extends AbstractChooserWindow{
     isAdmin = true;
     iwb = getBundle(iwc);
     iwrb = getResourceBundle(iwc);
-    core = iwc.getIWMainApplication().getBundle(TextReader.IW_CORE_BUNDLE_IDENTIFIER);
+    core = iwc.getIWMainApplication().getBundle(Builderaware.IW_CORE_BUNDLE_IDENTIFIER);
     reloadCheck(iwc);
     addTitle(iwrb.getLocalizedString("text_editor","Text Editor"));
     try{
