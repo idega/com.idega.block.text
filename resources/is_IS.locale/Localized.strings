@@ -1,10 +1,9 @@
-#Tue Aug 13 20:01:05 CEST 2002
-text_editor=Textastj\u00F3ri
-image=Mynd
-iw.component.com.idega.block.text.presentation.TextReader.name=Texti
-textimages=Myndir me\u00F0 texta\:
 body=Texti
-save=Vista
-title=Titill
-locale=Tungum\u00E1l
 close=Loka
+image=Mynd
+iw.component.com.idega.block.text.presentation.TextReader.name=Textastj\u00F3ri
+locale=Tungum\u00E1l
+save=Vista
+text_editor=Textastj\u00F3ri
+textimages=Myndir me\u00F0 texta\:
+title=Titill
