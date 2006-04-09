@@ -96,7 +96,7 @@ public class TextEditorWindow extends AbstractChooserWindow{
   }
 
   private void control(IWContext iwc)throws Exception{
-    if(debugParameter){
+    if(this.debugParameter){
       debugParameters(iwc);
     }
 
@@ -107,8 +107,9 @@ public class TextEditorWindow extends AbstractChooserWindow{
       debug("chooserParameterName!=null");
       debug("chooserParameterName="+chooserParameterName);
       debug("iwc.getParameter(chooserParameterName)="+iwc.getParameter(chooserParameterName));
-      if(iwc.isParameterSet(chooserParameterName))
-      prmUsedTextId=chooserParameterName;
+      if(iwc.isParameterSet(chooserParameterName)) {
+				this.prmUsedTextId=chooserParameterName;
+			}
     }
     else{
       debug("chooserParameterName==null");
@@ -119,17 +120,17 @@ public class TextEditorWindow extends AbstractChooserWindow{
     Locale chosenLocale;
 
     String sLocaleId = iwc.getParameter(prmLocale);
-		sTextId = iwc.getParameter(prmUsedTextId);
+		this.sTextId = iwc.getParameter(this.prmUsedTextId);
 
     if(iwc.isParameterSet(actClose)|| iwc.isParameterSet(actClose+".x")){
       if (chooserParameterName != null) {
       	System.out.println("TextEditorWindow : "+chooserParameterName);
       	System.out.println("SELECT_FUNCTION_NAME : "+SELECT_FUNCTION_NAME);
-      	System.out.println("sTextId : "+sTextId);
-				setOnLoad(SELECT_FUNCTION_NAME + "('" + sTextId + "','" + sTextId + "')");
+      	System.out.println("sTextId : "+this.sTextId);
+				setOnLoad(SELECT_FUNCTION_NAME + "('" + this.sTextId + "','" + this.sTextId + "')");
       }
       //else {
-	      if (parentReload) {
+	      if (this.parentReload) {
 	        setParentToReload();
 	      }
 	      close();
@@ -147,7 +148,7 @@ public class TextEditorWindow extends AbstractChooserWindow{
       iLocaleId = ICLocaleBusiness.getLocaleId(chosenLocale);
     }
 
-    if ( isAdmin ) {
+    if ( this.isAdmin ) {
     // end of LocaleHandling
 
     // Text initialization
@@ -157,22 +158,23 @@ public class TextEditorWindow extends AbstractChooserWindow{
 
     // Delete Request :
     if(iwc.getParameter(prmDelete)!=null){
-      sTextId = iwc.getParameter(prmDelete);
+      this.sTextId = iwc.getParameter(prmDelete);
       //add(""+iObjInsId);
-      confirmDelete(sTextId,iObjInsId);
+      confirmDelete(this.sTextId,this.iObjInsId);
       doView = false;
     }
     // Object Instance Request :
     if(iwc.getParameter(prmObjInstId)!= null){
-      iObjInsId = Integer.parseInt(iwc.getParameter(prmObjInstId ) );
+      this.iObjInsId = Integer.parseInt(iwc.getParameter(prmObjInstId ) );
     }
 
     // end of Text initialization
 
     // Form processing
-    processForm(iwc,sTextId,sLocTextId, sAttribute);
-      if(doView)
-        doViewText(iwc, sTextId,sAttribute,chosenLocale,iLocaleId);
+    processForm(iwc,this.sTextId,sLocTextId, sAttribute);
+      if(doView) {
+				doViewText(iwc, this.sTextId,sAttribute,chosenLocale,iLocaleId);
+			}
       }
       else {
         noAccess();
@@ -229,16 +231,18 @@ public class TextEditorWindow extends AbstractChooserWindow{
     if(sTextId != null){
       iTextId = Integer.parseInt(sTextId);
       eTxText = TextFinder.getText(iTextId);
-      if(iLocaleId > 0)
-        contentHelper = TextFinder.getContentHelper(iTextId,iLocaleId);
-      else
-        contentHelper = TextFinder.getContentHelper(iTextId,locale);
+      if(iLocaleId > 0) {
+				contentHelper = TextFinder.getContentHelper(iTextId,iLocaleId);
+			}
+			else {
+				contentHelper = TextFinder.getContentHelper(iTextId,locale);
+			}
     }
     else if(sAttribute != null){
       contentHelper = TextFinder.getContentHelper(sAttribute,iLocaleId);
     }
 
-    addLocalizedTextFields(iwc, eTxText,contentHelper,iLocaleId,sAttribute,iObjInsId);
+    addLocalizedTextFields(iwc, eTxText,contentHelper,iLocaleId,sAttribute,this.iObjInsId);
   }
 
   private void addLocalizedTextFields(IWContext iwc, TxText txText,ContentHelper contentHelper, int iLocaleId,String sAttribute,int iObjInsId){
@@ -272,15 +276,18 @@ public class TextEditorWindow extends AbstractChooserWindow{
       addHiddenInput(new HiddenInput(prmLocalizedTextId,String.valueOf(locText.getID())));
     }
 
-    if( hasTxText )
-      addHiddenInput(new HiddenInput(prmUsedTextId,Integer.toString(txText.getID())));
-    if(sAttribute != null)
-      addHiddenInput(new HiddenInput(prmAttribute,sAttribute));
-    if(iObjInsId > 0)
-      addHiddenInput(new HiddenInput(prmObjInstId,String.valueOf(iObjInsId)));
+    if( hasTxText ) {
+			addHiddenInput(new HiddenInput(this.prmUsedTextId,Integer.toString(txText.getID())));
+		}
+    if(sAttribute != null) {
+			addHiddenInput(new HiddenInput(prmAttribute,sAttribute));
+		}
+    if(iObjInsId > 0) {
+			addHiddenInput(new HiddenInput(prmObjInstId,String.valueOf(iObjInsId)));
+		}
 
     SubmitButton addButton = null;
-    addButton = new SubmitButton(core.getImage("/shared/create.gif"),prmSaveFile);
+    addButton = new SubmitButton(this.core.getImage("/shared/create.gif"),prmSaveFile);
     ImageInserter imageInsert = new ImageInserter();
     imageInsert.setImSessionImageName(prmImageId);
     imageInsert.setUseBoxParameterName(prmUseImage);
@@ -301,7 +308,7 @@ public class TextEditorWindow extends AbstractChooserWindow{
       List files = contentHelper.getFiles();
       if(files != null && files.size() > 0){
         imageTable.mergeCells(1,row,3,row);
-        imageTable.add( formatText(iwrb.getLocalizedString("textimages","Text images :")),1,row++);
+        imageTable.add( formatText(this.iwrb.getLocalizedString("textimages","Text images :")),1,row++);
         ICFile file1 = (ICFile) files.get(0);
         imageInsert.setImageId(((Integer)file1.getPrimaryKey()).intValue());
 
@@ -315,11 +322,11 @@ public class TextEditorWindow extends AbstractChooserWindow{
 
           imageTable.add(immi,1,row);
           //Link edit = new Link(iwb.getImage("/shared/edit.gif"));
-          Link edit = ImageAttributeSetter.getLink(iwb.getImage("/shared/edit.gif"),((Integer)f.getPrimaryKey()).intValue(),imageAttributeKey);
-          Link delete = new Link(core.getImage("/shared/delete.gif"));
+          Link edit = ImageAttributeSetter.getLink(this.iwb.getImage("/shared/edit.gif"),((Integer)f.getPrimaryKey()).intValue(),imageAttributeKey);
+          Link delete = new Link(this.core.getImage("/shared/delete.gif"));
 		  maintainParameter(iwc, delete);
           delete.addParameter(prmDeleteFile,((Integer)f.getPrimaryKey()).intValue());
-          delete.addParameter(prmUsedTextId,txText.getID());
+          delete.addParameter(this.prmUsedTextId,txText.getID());
           imageTable.add(edit,2,row);
           imageTable.add(delete,3,row);
           row++;
@@ -331,14 +338,14 @@ public class TextEditorWindow extends AbstractChooserWindow{
       }
 
     }
-    addLeft(iwrb.getLocalizedString("title","Title"),tiHeadline,true);
-    addLeft(iwrb.getLocalizedString("locale","Locale"), LocaleDrop,true);
-    addLeft(iwrb.getLocalizedString("body","Text"),taBody,true);
-    addRight(iwrb.getLocalizedString("image","Image"),imageTable,true,false);
+    addLeft(this.iwrb.getLocalizedString("title","Title"),tiHeadline,true);
+    addLeft(this.iwrb.getLocalizedString("locale","Locale"), LocaleDrop,true);
+    addLeft(this.iwrb.getLocalizedString("body","Text"),taBody,true);
+    addRight(this.iwrb.getLocalizedString("image","Image"),imageTable,true,false);
 
 
-    SubmitButton save = new SubmitButton(iwrb.getLocalizedImageButton("save","Save"),actSave);
-    SubmitButton close = new SubmitButton(iwrb.getLocalizedImageButton("close","Close"),actClose);
+    SubmitButton save = new SubmitButton(this.iwrb.getLocalizedImageButton("save","Save"),actSave);
+    SubmitButton close = new SubmitButton(this.iwrb.getLocalizedImageButton("close","Close"),actClose);
       getAssociatedScript().addFunction(ONCLICK_FUNCTION_NAME,"function "+ONCLICK_FUNCTION_NAME+"("+TEXT_NAME_PARAMETER_NAME+","+TEXT_ID_PARAMETER_NAME+"){ }");
       getAssociatedScript().addToFunction(ONCLICK_FUNCTION_NAME,AbstractChooserWindow.SELECT_FUNCTION_NAME+"("+TEXT_NAME_PARAMETER_NAME+","+TEXT_ID_PARAMETER_NAME+")");
     if (txText != null) {
@@ -349,7 +356,7 @@ public class TextEditorWindow extends AbstractChooserWindow{
   }
 
   private void noAccess() throws IOException,SQLException {
-    addLeft(iwrb.getLocalizedString("no_access","Login first!"));
+    addLeft(this.iwrb.getLocalizedString("no_access","Login first!"));
     this.addSubmitButton(new CloseButton());
   }
 
@@ -369,14 +376,14 @@ public class TextEditorWindow extends AbstractChooserWindow{
     TxText  txText= TextFinder.getText(iTextId);
 
     if ( txText != null ) {
-      addLeft(iwrb.getLocalizedString("text_to_delete","Text to delete"));
-      addLeft(iwrb.getLocalizedString("confirm_delete","Are you sure?"));
-      addSubmitButton(new SubmitButton(iwrb.getLocalizedImageButton("delete","Delete"),actDelete));
+      addLeft(this.iwrb.getLocalizedString("text_to_delete","Text to delete"));
+      addLeft(this.iwrb.getLocalizedString("confirm_delete","Are you sure?"));
+      addSubmitButton(new SubmitButton(this.iwrb.getLocalizedImageButton("delete","Delete"),actDelete));
       //addSubmitButton(new SubmitButton(iwrb.getImage("delete.gif"),actDelete));
       addHiddenInput(new HiddenInput(modeDelete,String.valueOf(txText.getID())));
     }
     else {
-      addLeft(iwrb.getLocalizedString("not_exists","Text already deleted or not available."));
+      addLeft(this.iwrb.getLocalizedString("not_exists","Text already deleted or not available."));
       addSubmitButton(new CloseButton());
     }
   }
@@ -404,10 +411,10 @@ public class TextEditorWindow extends AbstractChooserWindow{
 		//e.printStackTrace();
 	  }
 
-      TxText tx = TextBusiness.saveText(iTxTextId,iLocalizedTextId,iLocaleId,iUserId,iObjInsId,null,null,sHeadline,"",sBody,sAttribute,files);
+      TxText tx = TextBusiness.saveText(iTxTextId,iLocalizedTextId,iLocaleId,this.iUserId,this.iObjInsId,null,null,sHeadline,"",sBody,sAttribute,files);
       
       if(tx != null){
-		sTextId = tx.getPrimaryKey().toString();
+		this.sTextId = tx.getPrimaryKey().toString();
       }
       
     }
@@ -425,15 +432,15 @@ public class TextEditorWindow extends AbstractChooserWindow{
 
   public void displaySelection(IWContext iwc) {
 //    super.main(iwc);
-    isAdmin = iwc.hasEditPermission(new TextReader());
+    this.isAdmin = iwc.hasEditPermission(new TextReader());
     User u= iwc.getCurrentUser();
-    iUserId = u != null?u.getID():-1;
-    isAdmin = true;
-    iwb = getBundle(iwc);
-    iwrb = getResourceBundle(iwc);
-    core = iwc.getIWMainApplication().getBundle(Builderaware.IW_CORE_BUNDLE_IDENTIFIER);
+    this.iUserId = u != null?u.getID():-1;
+    this.isAdmin = true;
+    this.iwb = getBundle(iwc);
+    this.iwrb = getResourceBundle(iwc);
+    this.core = iwc.getIWMainApplication().getBundle(Builderaware.IW_CORE_BUNDLE_IDENTIFIER);
     reloadCheck(iwc);
-    addTitle(iwrb.getLocalizedString("text_editor","Text Editor"));
+    addTitle(this.iwrb.getLocalizedString("text_editor","Text Editor"));
     try{
       control(iwc);
     }
@@ -448,12 +455,12 @@ public class TextEditorWindow extends AbstractChooserWindow{
 
   private void reloadCheck(IWContext iwc) {
     if (iwc.getSessionAttribute(TextChooser.RELOAD_PARENT_PARAMETER) != null) {
-      parentReload = false;
+      this.parentReload = false;
     }
   }
 
   public void setDebugParameters(boolean debug){
-    debugParameter = debug;
+    this.debugParameter = debug;
   }
 
   public void setParentToReload(boolean reload) {
