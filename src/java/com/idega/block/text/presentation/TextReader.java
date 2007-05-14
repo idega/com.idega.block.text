@@ -16,6 +16,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.ejb.FinderException;
+
 import com.idega.block.text.business.ContentFinder;
 import com.idega.block.text.business.ContentHelper;
 import com.idega.block.text.business.TextBusiness;
@@ -27,6 +29,7 @@ import com.idega.block.text.data.TxTextHome;
 import com.idega.core.file.data.ICFile;
 import com.idega.core.localisation.business.ICLocaleBusiness;
 import com.idega.data.IDOLookup;
+import com.idega.data.IDOLookupException;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.block.presentation.Builderaware;
 import com.idega.presentation.Block;
@@ -159,6 +162,29 @@ public class TextReader extends Block implements Builderaware {
 		add(T);
 	}
 
+	public String getText(int localeID) {
+		TxText txText = null;
+		if (this.iTextId > 0) {
+			try {
+				TxTextHome txHome = (TxTextHome) IDOLookup.getHome(TxText.class);
+				txText = txHome.findByPrimaryKey(new Integer(this.iTextId));
+			} catch (IDOLookupException e) {
+				e.printStackTrace();
+			} catch (FinderException e) {
+				e.printStackTrace();
+			}
+		}
+
+		if (txText != null) {
+			this.iTextId = txText.getID();
+			ContentHelper ch = ContentFinder.getContentHelper(txText.getContentId(), localeID);
+			if (ch != null) {
+				return ch.getLocalizedText().getBody();
+			}
+		}
+		return "";
+	}
+	
 	public PresentationObject getTextTable(TxText txText, LocalizedText locText, ContentHelper contentHelper) throws IOException, SQLException {
 		Table T = new Table();
 		T.setCellpadding(0);
