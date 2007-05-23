@@ -43,13 +43,13 @@ import com.idega.util.text.TextSoap;
 
 public class TextReader extends Block implements Builderaware {
 
-	private boolean isAdmin = false;
-	private boolean createInstance = true;
+	protected boolean isAdmin = false;
+	protected boolean createInstance = true;
 
 	private String sLocaleId;
-	private String sAttribute = null;
+	protected String sAttribute = null;
 
-	private int iTextId = -1;
+	protected int iTextId = -1;
 	private int textSize = -1;
 	private int tableTextSize = 1;
 	private int headlineSize = -2;
@@ -66,12 +66,12 @@ public class TextReader extends Block implements Builderaware {
 	private String headlineStyle;
 	private String spaceBetweenHeadlineAndBody = null;
 	private boolean displayHeadline = true;
-	private boolean enableDelete = false;
-	private boolean reverse = false;
-	private boolean crazy = false;
+	protected boolean enableDelete = false;
+	protected boolean reverse = false;
+	protected boolean crazy = false;
 	private boolean viewall = false;
-	private boolean newobjinst = false;
-	private boolean newWithAttribute = false;
+	protected boolean newobjinst = false;
+	protected boolean newWithAttribute = false;
 	
 	private String textStyleName = "body";
 	private String headlineStyleName = "headline";
@@ -81,7 +81,7 @@ public class TextReader extends Block implements Builderaware {
 
 	public static String prmTextId = "txtr.textid";
 
-	private IWBundle iwcb;
+	protected IWBundle iwcb;
 	private final static String IW_BUNDLE_IDENTIFIER = "com.idega.block.text";
 	public final static String CACHE_KEY = "tx_text";
 
@@ -109,11 +109,6 @@ public class TextReader extends Block implements Builderaware {
 		TxText txText = null;
 		LocalizedText locText = null;
 		ContentHelper ch = null;
-		Table T = new Table();
-		T.setCellpadding(0);
-		T.setCellspacing(0);
-		T.setBorder(0);
-		T.setWidth(this.textWidth);
 
 		if (this.iTextId < 0) {
 			String sTextId = iwc.getParameter(prmTextId);
@@ -149,6 +144,18 @@ public class TextReader extends Block implements Builderaware {
 			hasId = true;
 		}
 
+		PresentationObject T = getTextPresentation(txText, locText, ch, hasId);
+
+		add(T);
+	}
+
+	protected PresentationObject getTextPresentation(TxText txText, LocalizedText locText, ContentHelper ch, boolean hasId) throws IOException, SQLException {
+		Table T = new Table();
+		T.setCellpadding(0);
+		T.setCellspacing(0);
+		T.setBorder(0);
+		T.setWidth(this.textWidth);
+
 		if (ch != null && locText != null) {
 			T.add(getTextTable(txText, locText, ch), 1, 1);
 
@@ -158,8 +165,7 @@ public class TextReader extends Block implements Builderaware {
 		}
 
 		T.setBorder(0);
-
-		add(T);
+		return T;
 	}
 
 	public String getText(int localeID) {
@@ -185,7 +191,7 @@ public class TextReader extends Block implements Builderaware {
 		return "";
 	}
 	
-	public PresentationObject getTextTable(TxText txText, LocalizedText locText, ContentHelper contentHelper) throws IOException, SQLException {
+	protected PresentationObject getTextTable(TxText txText, LocalizedText locText, ContentHelper contentHelper) throws IOException, SQLException {
 		Table T = new Table();
 		T.setCellpadding(0);
 		T.setCellspacing(0);
@@ -290,7 +296,7 @@ public class TextReader extends Block implements Builderaware {
 		return T;
 	}
 
-	public PresentationObject getAdminPart(int iTextId, boolean enableDelete, boolean newObjInst, boolean newWithAttribute, boolean hasId) {
+	protected PresentationObject getAdminPart(int iTextId, boolean enableDelete, boolean newObjInst, boolean newWithAttribute, boolean hasId) {
 		Table T = new Table();
 		T.setCellpadding(0);
 		T.setCellspacing(0);
