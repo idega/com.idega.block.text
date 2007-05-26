@@ -59,7 +59,8 @@ public class TextReaderCSS extends TextReader {
 		Layer headlineL = new Layer();
 		headlineL.setStyleClass(styleClassPrefix + ATTRIBUTE_HEADLINE);
 		Text headLine = new Text(sHeadline);
-		layer.add(headLine);
+		headlineL.add(headLine);
+		layer.add(headlineL);
 		
 		Layer bodyL = new Layer();
 		bodyL.setStyleClass(styleClassPrefix + ATTRIBUTE_BODY);
