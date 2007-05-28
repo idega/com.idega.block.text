@@ -1,10 +1,10 @@
-#Fri Oct 24 12:54:49 CEST 2003
 Mobile_phone=
 body=Texti
 case_status_key.FLYT=
 close=St\u00E4ng
 image=Mynd
 iw.component.com.idega.block.text.presentation.TextReader.name=Text
+iw.component.com.idega.block.text.presentation.TextReaderCSS.name=Text (CSS)
 locale=Locale
 new_quote=
 save=Spara
