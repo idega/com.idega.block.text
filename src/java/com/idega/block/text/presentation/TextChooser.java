@@ -66,4 +66,9 @@ public class TextChooser extends AbstractChooser {
     this._chooseButtonImage = image;
   }
 
+  @Override
+  protected String getChooserHelperVarName() {
+	return null;
+  }
+
 }
