@@ -9,7 +9,7 @@
   <groupId>com.idega.block.legacy</groupId>
   <artifactId>com.idega.block.text</artifactId>
   <packaging>jar</packaging>
-  <version>4.0.1</version>
+  <version>4.0.2-SNAPSHOT</version>
   <inceptionYear>2006</inceptionYear>
   <description>idegaWeb Text Block</description>
   <scm>
@@ -19,7 +19,6 @@
      -->
     <connection>scm:cvs:ext:civilis@code.idega.com:/idega/cvs:com.idega.block.legacy/com.idega.block.text/</connection>
     <developerConnection>scm:cvs:ext:civilis@code.idega.com:/idega/cvs:com.idega.block.legacy/com.idega.block.text/</developerConnection>
-    <tag>com_idega_block_addon_super-4_0_1</tag>
   </scm>
   <developers>
     <developer>
