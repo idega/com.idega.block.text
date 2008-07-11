@@ -1,5 +1,7 @@
 package com.idega.block.text.data;
 
+import javax.ejb.FinderException;
+
 
 public class LocalizedTextHomeImpl extends com.idega.data.IDOFactory implements LocalizedTextHome
 {
@@ -39,5 +41,11 @@ public class LocalizedTextHomeImpl extends com.idega.data.IDOFactory implements 
 
  }
 
+ 	public LocalizedText findLocalizedNameForApplication(String applicationName, int localeId) throws FinderException {
+ 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+ 		Object pk = ((LocalizedTextBMPBean) entity).ejbFindLocalizedNameForApplication(applicationName, localeId);
+ 		this.idoCheckInPooledEntity(entity);
+ 		return this.findByPrimaryKey(pk);
+ 	}
 
 }

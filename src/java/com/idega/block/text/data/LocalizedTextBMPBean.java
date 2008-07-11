@@ -6,9 +6,15 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Collection;
 
+import javax.ejb.FinderException;
+
 import com.idega.data.IDOAddRelationshipException;
 import com.idega.data.IDOEntity;
 import com.idega.data.IDORelationshipException;
+import com.idega.data.query.Column;
+import com.idega.data.query.MatchCriteria;
+import com.idega.data.query.SelectQuery;
+import com.idega.data.query.Table;
 import com.idega.util.text.TextSoap;
 
 public class LocalizedTextBMPBean extends com.idega.data.GenericEntity implements com.idega.block.text.data.LocalizedText {
@@ -154,5 +160,22 @@ public class LocalizedTextBMPBean extends com.idega.data.GenericEntity implement
   		throw new IDOAddRelationshipException(ex, this);
   	}
   }
+  
+  	public Integer ejbFindLocalizedNameForApplication(String applicationName, int localeId) throws FinderException {
+  		Table localizedTextTable = new Table(this);
+  		Table egovAppTable = new Table("EGOV_APPLICATION");
+  		Table localizationBinderTable = new Table("EGOV_APPLICATION_URL_LOC_TEXT");
+  		
+  		SelectQuery query = new SelectQuery(localizedTextTable);
+  		query.addColumn(new Column(getIDColumnName()));
+  		
+		query.addJoin(localizationBinderTable, "TX_LOCALIZED_TEXT_ID", localizedTextTable, "TX_LOCALIZED_TEXT_ID");
+		query.addJoin(egovAppTable, "EGOV_APPLICATION_ID", localizationBinderTable, "EGOV_APPLICATION_ID");
+  		
+ 	    query.addCriteria(new MatchCriteria(egovAppTable, "APPLICATION_URL", MatchCriteria.EQUALS, applicationName));
+ 	    query.addCriteria(new MatchCriteria(localizedTextTable, getColumnNameLocaleId(), MatchCriteria.EQUALS, localeId));
+ 	    
+ 	    return (Integer) idoFindOnePKByQuery(query);
+  	}
 
 }
