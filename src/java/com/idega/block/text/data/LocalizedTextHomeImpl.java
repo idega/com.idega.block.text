@@ -1,10 +1,5 @@
 package com.idega.block.text.data;
 
-import java.util.Collection;
-
-import javax.ejb.FinderException;
-
-import com.idega.data.IDOEntity;
 
 
 public class LocalizedTextHomeImpl extends com.idega.data.IDOFactory implements LocalizedTextHome
