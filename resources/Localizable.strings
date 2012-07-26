@@ -8,6 +8,7 @@ iw.component.com.idega.block.text.presentation.TextReaderCSS.name=Text (CSS)
 locale=Locale
 new_quote=
 save=Spara
+subtitle=Subtitle
 text_editor=Textastj\u00F3ri
 textimages=Text images\:
 title=Titill

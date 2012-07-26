@@ -7,7 +7,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Vector;
+
 import javax.ejb.FinderException;
+
 import com.idega.block.image.presentation.ImageAttributeSetter;
 import com.idega.block.media.presentation.ImageInserter;
 import com.idega.block.text.business.ContentBusiness;
@@ -59,6 +61,7 @@ public class TextEditorWindow extends AbstractChooserWindow{
   public final static String prmLocale = "txep_localedrp";
   public final static String prmObjInstId = "txep_icobjinstid";
   private final static String prmHeadline = "txep_headline";
+  private static final String SUBTITLE = "txep_title";
   private final static String prmBody = "txep_body";
   public final static String imageAttributeKey = "txre_im_prop";
   public boolean debugParameter = false;
@@ -255,9 +258,13 @@ public class TextEditorWindow extends AbstractChooserWindow{
     }
     boolean hasLocalizedText = ( locText !=null );
 
+    
     TextInput tiHeadline = new TextInput(prmHeadline);
     tiHeadline.setLength(40);
     tiHeadline.setMaxlength(255);
+    TextInput tiSubtitle = new TextInput(SUBTITLE);
+    tiSubtitle.setLength(40);
+    tiSubtitle.setMaxlength(255);
     DropdownMenu LocaleDrop = ICLocalePresentation.getLocaleDropdownIdKeyed(prmLocale);
     LocaleDrop.setToSubmit();
     LocaleDrop.setSelectedElement(Integer.toString(iLocaleId));
@@ -272,6 +279,10 @@ public class TextEditorWindow extends AbstractChooserWindow{
       }
       if ( locText.getBody() != null ) {
         taBody.setContent(locText.getBody());
+      }
+      String title = locText.getTitle();
+      if(title != null){
+    	  tiSubtitle.setContent(title);
       }
       addHiddenInput(new HiddenInput(prmLocalizedTextId,String.valueOf(locText.getID())));
     }
@@ -339,6 +350,7 @@ public class TextEditorWindow extends AbstractChooserWindow{
 
     }
     addLeft(this.iwrb.getLocalizedString("title","Title"),tiHeadline,true);
+    addLeft(this.iwrb.getLocalizedString("subtitle","Subtitle"),tiSubtitle,true);
     addLeft(this.iwrb.getLocalizedString("locale","Locale"), LocaleDrop,true);
     addLeft(this.iwrb.getLocalizedString("body","Text"),taBody,true);
     addRight(this.iwrb.getLocalizedString("image","Image"),imageTable,true,false);
@@ -393,6 +405,7 @@ public class TextEditorWindow extends AbstractChooserWindow{
     String sBody = iwc.getParameter(prmBody );
     String sImageId = iwc.getParameter(prmImageId);
     String sLocaleId = iwc.getParameter(prmLocale);
+    String sTitle = iwc.getParameter(SUBTITLE);
     if(sHeadline != null || sBody != null){
       int iTxTextId = sTxTextId!=null?Integer.parseInt(sTxTextId): -1;
       int iLocalizedTextId = sLocalizedTextId != null ? Integer.parseInt(sLocalizedTextId): -1;
@@ -411,7 +424,7 @@ public class TextEditorWindow extends AbstractChooserWindow{
 		//e.printStackTrace();
 	  }
 
-      TxText tx = TextBusiness.saveText(iTxTextId,iLocalizedTextId,iLocaleId,this.iUserId,this.iObjInsId,null,null,sHeadline,"",sBody,sAttribute,files);
+      TxText tx = TextBusiness.saveText(iTxTextId,iLocalizedTextId,iLocaleId,this.iUserId,this.iObjInsId,null,null,sHeadline,sTitle,sBody,sAttribute,files);
       
       if(tx != null){
 		this.sTextId = tx.getPrimaryKey().toString();
