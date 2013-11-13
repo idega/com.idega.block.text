@@ -1,8 +1,9 @@
 package com.idega.block.text.business;
 
-import com.idega.presentation.IWContext;
-import java.util.Vector;
+import java.util.List;
 import java.util.StringTokenizer;
+
+import com.idega.presentation.IWContext;
 import com.idega.util.text.TextSoap;
 /**
  *  Title: Description: Copyright: Copyright (c) 2001 Company:
@@ -95,7 +96,8 @@ public class TextFormatter {
 	/**
 	 *@deprecated Use <code>TextSoap.formatText(String textBody)<code> instead
 	 */
- public static String formatText(String textBody) {
+ @Deprecated
+public static String formatText(String textBody) {
  	return TextSoap.formatText(textBody);
  }
 
@@ -106,9 +108,8 @@ public class TextFormatter {
    *@param  textBody  Description of the Parameter
    *@return           Description of the Return Value
    */
-  public static Vector testText(String textBody) {
-    Vector testVector = TextSoap.FindAllBetween(textBody, "\r\n\r\n", "\r\n");
-    return testVector;
+  public static List<String> testText(String textBody) {
+    return TextSoap.FindAllBetween(textBody, "\r\n\r\n", "\r\n");
   }
 
 
@@ -118,9 +119,8 @@ public class TextFormatter {
    *@param  textBody  Description of the Parameter
    *@return           Description of the Return Value
    */
-  public static Vector createTextTable(String textBody) {
-    Vector tableVector = TextSoap.FindAllBetween(textBody, "|", "|\r\n");
-    return tableVector;
+  public static List<String> createTextTable(String textBody) {
+    return TextSoap.FindAllBetween(textBody, "|", "|\r\n");
   }
 
 
@@ -130,9 +130,8 @@ public class TextFormatter {
    *@param  textBody  Description of the Parameter
    *@return           Description of the Return Value
    */
-  public static Vector createTextTableNoBanner(String textBody) {
-    Vector tableVector = TextSoap.FindAllBetween(textBody, "?", "?\r\n");
-    return tableVector;
+  public static List<String> createTextTableNoBanner(String textBody) {
+    return TextSoap.FindAllBetween(textBody, "?", "?\r\n");
   }
 
 
@@ -142,9 +141,8 @@ public class TextFormatter {
    *@param  textBody  Description of the Parameter
    *@return           Description of the Return Value
    */
-  public static Vector createTextLink(String textBody) {
-    Vector linkVector = TextSoap.FindAllBetween(textBody, "Link(", ")");
-    return linkVector;
+  public static List<String> createTextLink(String textBody) {
+    return TextSoap.FindAllBetween(textBody, "Link(", ")");
   }
 
 
