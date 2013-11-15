@@ -75,20 +75,11 @@ public class TextFormatter {
    */
   public static String formatMSWordStringToIdegaWebString(String text) {
     String returnString = text;
-    //lists
-
-    //returnString = TextSoap.findAndReplace(text,"-	","*");
-    //returnString = TextSoap.findAndReplace(text,"·	","*");
     returnString = TextSoap.findAndReplace(text, "	", " ");
-    //space in word tables
-    //returnString = TextSoap.findAndReplace(text,"o	","*");
-    //returnString = TextSoap.findAndReplace(text,"	","*");
     returnString = TextSoap.findAndReplace(text, "&#61553;", "*");
     returnString = TextSoap.findAndReplace(text, "&#61558;", "*");
     returnString = TextSoap.findAndReplace(text, "&#61607;", "*");
     returnString = TextSoap.findAndReplace(text, "&#61656;", "*");
-//    returnString = TextSoap.findAndReplace(text,"?\t","*");
-//    returnString = TextSoap.findAndReplace(text,"o\t","*");
     return returnString;
   }
 
