@@ -1,14 +1,18 @@
 package com.idega.block.text.data;
 
+import com.idega.block.text.model.LocalizedTextModel;
 
-public interface LocalizedText extends com.idega.data.IDOLegacyEntity
+public interface LocalizedText extends com.idega.data.IDOLegacyEntity, LocalizedTextModel
 {
- public java.lang.String getBody();
+ @Override
+public java.lang.String getBody();
  public java.lang.String getMarkupLanguage();
  public java.sql.Timestamp getCreated();
- public java.lang.String getHeadline();
+ @Override
+public java.lang.String getHeadline();
  public int getLocaleId();
- public java.lang.String getTitle();
+ @Override
+public java.lang.String getTitle();
  public java.sql.Timestamp getUpdated();
  public void setBody(java.lang.String p0);
  public void setCreated(java.sql.Timestamp p0);
@@ -20,6 +24,6 @@ public interface LocalizedText extends com.idega.data.IDOLegacyEntity
  public void setUpdated(java.sql.Timestamp p0);
  public java.util.Collection ejbFindRelatedEntities(com.idega.data.IDOEntity entity) throws com.idega.data.IDORelationshipException;
  public void idoAddTo(com.idega.data.IDOEntity entity) throws com.idega.data.IDOAddRelationshipException;
- public void idoAddTo(String middleTableName, String sqlFieldName, Object primaryKey) throws com.idega.data.IDOAddRelationshipException; 
- 	 
+ public void idoAddTo(String middleTableName, String sqlFieldName, Object primaryKey) throws com.idega.data.IDOAddRelationshipException;
+
 }
