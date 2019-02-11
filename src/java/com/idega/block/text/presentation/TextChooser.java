@@ -3,7 +3,7 @@ package com.idega.block.text.presentation;
 import com.idega.block.text.data.TxText;
 import com.idega.idegaweb.IWBundle;
 import com.idega.presentation.IWContext;
-import com.idega.presentation.Image;
+import com.idega.presentation.PresentationObject;
 import com.idega.presentation.ui.AbstractChooser;
 /**
  * Title: com.idega.block.text.presentation.TextChooser
@@ -15,7 +15,7 @@ import com.idega.presentation.ui.AbstractChooser;
  */
 
 public class TextChooser extends AbstractChooser {
-  private Image _chooseButtonImage;
+  private PresentationObject _chooseButtonImage;
   public static String RELOAD_PARENT_PARAMETER = "tx_no_reload";
   private final static String IW_BUNDLE_IDENTIFIER = "com.idega.block.text";
 
@@ -62,7 +62,7 @@ public class TextChooser extends AbstractChooser {
     setSelectedText((TxText)text);
   }
 
-  public void setChooseImage(Image image) {
+  public void setChooseImage(PresentationObject image) {
     this._chooseButtonImage = image;
   }
 
