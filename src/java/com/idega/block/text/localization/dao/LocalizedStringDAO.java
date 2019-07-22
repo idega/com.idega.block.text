@@ -20,4 +20,6 @@ public interface LocalizedStringDAO extends GenericDao {
 
 	public List<LocalizedString> getLocalizedStrings(String identifier, String locale, List<String> keys);
 
+	public void deleteLocalizedString(String key, String identifier, String locale);
+
 }

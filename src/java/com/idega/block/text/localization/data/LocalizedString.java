@@ -24,8 +24,11 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 		@Index(name = "loc_str_locale_index", columnList = LocalizedString.COLUMN_LOCALE),
 		@Index(name = "loc_str_key_index", columnList = LocalizedString.COLUMN_KEY),
 		@Index(name = "loc_str_message_index", columnList = LocalizedString.COLUMN_MESSAGE),
+		@Index(name = "loc_str_version_index", columnList = LocalizedString.COLUMN_VERSION),
 		@Index(name = "loc_str_key_id_loc_index", columnList = LocalizedString.COLUMN_KEY + "," + LocalizedString.COLUMN_IDENTIFIER + "," + LocalizedString.COLUMN_LOCALE),
-		@Index(name = "loc_str_id_loc_index", columnList = LocalizedString.COLUMN_IDENTIFIER + "," + LocalizedString.COLUMN_LOCALE)
+		@Index(name = "loc_str_id_loc_index", columnList = LocalizedString.COLUMN_IDENTIFIER + "," + LocalizedString.COLUMN_LOCALE),
+		@Index(name = "loc_str_key_id_loc_ver_index", columnList = LocalizedString.COLUMN_KEY + "," + LocalizedString.COLUMN_IDENTIFIER + "," + LocalizedString.COLUMN_LOCALE + "," + LocalizedString.COLUMN_VERSION),
+		@Index(name = "loc_str_id_loc_ver_index", columnList = LocalizedString.COLUMN_IDENTIFIER + "," + LocalizedString.COLUMN_LOCALE + "," + LocalizedString.COLUMN_VERSION)
 })
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
@@ -33,27 +36,34 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 	@NamedQuery(
 			name = LocalizedString.FIND_BY_IDENTIFIER_KEY_LOCALE,
 			query = "select t from LocalizedString t where t.key = :" + LocalizedString.PARAM_KEY + " and t.identifier = :" + LocalizedString.PARAM_IDENTIFIER + " and t.locale = :" + LocalizedString.PARAM_LOCALE +
-			" order by t.version desc"
+			" and t.deleted = 0 order by t.version desc"
 	),
 	@NamedQuery(
 			name = LocalizedString.FIND_MESSAGE_BY_IDENTIFIER_KEY_LOCALE,
 			query = "select t.message from LocalizedString t where t.key = :" + LocalizedString.PARAM_KEY + " and t.identifier = :" + LocalizedString.PARAM_IDENTIFIER + " and t.locale = :" + LocalizedString.PARAM_LOCALE +
-			" order by t.version desc"
+			" and t.deleted = 0 order by t.version desc"
 	),
 	@NamedQuery(
 			name = LocalizedString.FIND_LATEST_VERSION_NR,
-			query = "select max(t.version) from LocalizedString t where t.key = :" + LocalizedString.PARAM_KEY + " and t.identifier = :" + LocalizedString.PARAM_IDENTIFIER + " and t.locale = :" + LocalizedString.PARAM_LOCALE
+			query = "select max(t.version) from LocalizedString t where t.key = :" + LocalizedString.PARAM_KEY + " and t.identifier = :" + LocalizedString.PARAM_IDENTIFIER + " and t.locale = :" + LocalizedString.PARAM_LOCALE +
+			" and t.deleted = 0"
 	),
 	@NamedQuery(
-			name = LocalizedString.FIND_ALL_BY_IDENTIFIER_AND_LOCALE,
+			name = LocalizedString.FIND_ALL_LATEST_BY_IDENTIFIER_AND_LOCALE,
 			query = "select t from LocalizedString t where t.identifier = :" + LocalizedString.PARAM_IDENTIFIER + " and t.locale = :" + LocalizedString.PARAM_LOCALE + " and t.version in " +
-			"(select max(tt.version) from LocalizedString tt where t.key = tt.key and tt.identifier = :" + LocalizedString.PARAM_IDENTIFIER + " and tt.locale = :" + LocalizedString.PARAM_LOCALE + ") group by t.key"
+			"(select max(tt.version) from LocalizedString tt where t.key = tt.key and tt.identifier = :" + LocalizedString.PARAM_IDENTIFIER + " and tt.locale = :" + LocalizedString.PARAM_LOCALE +
+			" and tt.deleted = 0) and t.deleted = 0 group by t.key"
+	),
+	@NamedQuery(
+			name = LocalizedString.FIND_ALL_BY_IDENTIFIER_AND_LOCALE_AND_KEY,
+			query = "select t from LocalizedString t where t.key = :" + LocalizedString.PARAM_KEY + " and t.identifier = :" + LocalizedString.PARAM_IDENTIFIER + " and t.locale = :" + LocalizedString.PARAM_LOCALE +
+			" and t.deleted = 0"
 	),
 	@NamedQuery(
 			name = LocalizedString.FIND_BY_IDENTIFIER_LOCALE_AND_KEYS,
 			query = "select t from LocalizedString t where t.key in (:" + LocalizedString.PARAM_KEY + ") and t.identifier = :" + LocalizedString.PARAM_IDENTIFIER + " and t.locale = :" + LocalizedString.PARAM_LOCALE +
 			" and t.version in (select max(tt.version) from LocalizedString tt where t.key = tt.key and tt.identifier = :" + LocalizedString.PARAM_IDENTIFIER + " and tt.locale = :" + LocalizedString.PARAM_LOCALE +
-			") group by t.key"
+			" and tt.deleted = 0) and t.deleted = 0 group by t.key"
 	)
 })
 public class LocalizedString implements Serializable {
@@ -68,11 +78,15 @@ public class LocalizedString implements Serializable {
 								COLUMN_MESSAGE = "message",
 								COLUMN_VERSION = "version",
 								COLUMN_MODIFIED = "modified",
+								COLUMN_DELETED = "deleted",
+								COLUMN_DELETED_WHEN = "deleted_when",
+								COLUMN_DELETED_BY = "deleted_by",
 
 								FIND_BY_IDENTIFIER_KEY_LOCALE = "LocalizedString.findByIdentifierKeyLocale",
 								FIND_MESSAGE_BY_IDENTIFIER_KEY_LOCALE = "LocalizedString.findMessageByIdentifierKeyLocale",
 								FIND_LATEST_VERSION_NR = "LocalizedString.findLatestVersionNr",
-								FIND_ALL_BY_IDENTIFIER_AND_LOCALE = "LocalizedString.findAllByIdentifierAndLocale",
+								FIND_ALL_LATEST_BY_IDENTIFIER_AND_LOCALE = "LocalizedString.findAllLatestByIdentifierAndLocale",
+								FIND_ALL_BY_IDENTIFIER_AND_LOCALE_AND_KEY = "LocalizedString.findAllByIdentifierAndLocaleAndKey",
 								FIND_BY_IDENTIFIER_LOCALE_AND_KEYS = "LocalizedString.findByIdentifierLocaleAndKeys",
 
 								PARAM_KEY = "locKey",
@@ -102,6 +116,15 @@ public class LocalizedString implements Serializable {
 	@Column(name = COLUMN_MODIFIED)
 	private Timestamp modified;
 
+	@Column(name = COLUMN_DELETED)
+	private Boolean deleted;
+
+	@Column(name = COLUMN_DELETED_WHEN)
+	private Timestamp deletedWhen;
+
+	@Column(name = COLUMN_DELETED_BY)
+	private Integer deletedBy;
+
 	public LocalizedString() {
 		super();
 	}
@@ -120,6 +143,9 @@ public class LocalizedString implements Serializable {
 	public void prePersist() {
 		if (modified == null) {
 			modified = new Timestamp(System.currentTimeMillis());
+		}
+		if (deleted == null) {
+			deleted = Boolean.FALSE;
 		}
 	}
 
@@ -177,6 +203,30 @@ public class LocalizedString implements Serializable {
 
 	public void setModified(Timestamp modified) {
 		this.modified = modified;
+	}
+
+	public Boolean getDeleted() {
+		return deleted;
+	}
+
+	public void setDeleted(Boolean deleted) {
+		this.deleted = deleted;
+	}
+
+	public Timestamp getDeletedWhen() {
+		return deletedWhen;
+	}
+
+	public void setDeletedWhen(Timestamp deletedWhen) {
+		this.deletedWhen = deletedWhen;
+	}
+
+	public Integer getDeletedBy() {
+		return deletedBy;
+	}
+
+	public void setDeletedBy(Integer deletedBy) {
+		this.deletedBy = deletedBy;
 	}
 
 	@Override

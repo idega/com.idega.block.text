@@ -1,5 +1,6 @@
 package com.idega.block.text.localization.dao.impl;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -15,6 +16,9 @@ import com.idega.block.text.localization.dao.LocalizedStringDAO;
 import com.idega.block.text.localization.data.LocalizedString;
 import com.idega.core.persistence.Param;
 import com.idega.core.persistence.impl.GenericDaoImpl;
+import com.idega.presentation.IWContext;
+import com.idega.user.data.bean.User;
+import com.idega.util.CoreUtil;
 import com.idega.util.ListUtil;
 import com.idega.util.StringUtil;
 import com.idega.util.datastructures.map.MapUtil;
@@ -66,7 +70,7 @@ public class LocalizedStringDAOImpl extends GenericDaoImpl implements LocalizedS
 
 		try {
 			List<LocalizedString> localizedStrings = getResultList(
-					LocalizedString.FIND_ALL_BY_IDENTIFIER_AND_LOCALE,
+					LocalizedString.FIND_ALL_LATEST_BY_IDENTIFIER_AND_LOCALE,
 					LocalizedString.class,
 					new Param(LocalizedString.PARAM_IDENTIFIER, identifier),
 					new Param(LocalizedString.PARAM_LOCALE, locale)
@@ -164,6 +168,44 @@ public class LocalizedStringDAOImpl extends GenericDaoImpl implements LocalizedS
 		for (String key: keys) {
 			LocalizedString latestLS = groupedExistingLocalizations.get(key);
 			setLocalizedString(latestLS, key, copy.get(key), identifier, locale);
+		}
+	}
+
+	@Override
+	@Transactional(readOnly = false)
+	public void deleteLocalizedString(String key, String identifier, String locale) {
+		if (StringUtil.isEmpty(key) || StringUtil.isEmpty(identifier) || StringUtil.isEmpty(locale)) {
+			return;
+		}
+
+		try {
+			List<LocalizedString> toDelete = getResultList(
+					LocalizedString.FIND_ALL_BY_IDENTIFIER_AND_LOCALE_AND_KEY,
+					LocalizedString.class,
+					new Param(LocalizedString.PARAM_KEY, key),
+					new Param(LocalizedString.PARAM_IDENTIFIER, identifier),
+					new Param(LocalizedString.PARAM_LOCALE, locale)
+			);
+			if (ListUtil.isEmpty(toDelete)) {
+				return;
+			}
+
+			Integer deletedBy = null;
+			IWContext iwc = CoreUtil.getIWContext();
+			if (iwc != null && iwc.isLoggedOn()) {
+				User user = iwc.getLoggedInUser();
+				if (user != null) {
+					deletedBy = user.getId();
+				}
+			}
+			for (LocalizedString locStrToDelete: toDelete) {
+				locStrToDelete.setDeleted(Boolean.TRUE);
+				locStrToDelete.setDeletedWhen(new Timestamp(System.currentTimeMillis()));
+				locStrToDelete.setDeletedBy(deletedBy);
+				merge(locStrToDelete);
+			}
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Error deleting " + key + " from " + identifier + " by " + locale, e);
 		}
 	}
 
