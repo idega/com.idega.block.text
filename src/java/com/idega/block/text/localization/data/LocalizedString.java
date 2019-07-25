@@ -26,9 +26,15 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 		@Index(name = "loc_str_message_index", columnList = LocalizedString.COLUMN_MESSAGE),
 		@Index(name = "loc_str_version_index", columnList = LocalizedString.COLUMN_VERSION),
 		@Index(name = "loc_str_key_id_loc_index", columnList = LocalizedString.COLUMN_KEY + "," + LocalizedString.COLUMN_IDENTIFIER + "," + LocalizedString.COLUMN_LOCALE),
+		@Index(name = "loc_str_key_id_loc_del_index", columnList = LocalizedString.COLUMN_KEY + "," + LocalizedString.COLUMN_IDENTIFIER + "," + LocalizedString.COLUMN_LOCALE + "," + LocalizedString.COLUMN_DELETED),
 		@Index(name = "loc_str_id_loc_index", columnList = LocalizedString.COLUMN_IDENTIFIER + "," + LocalizedString.COLUMN_LOCALE),
 		@Index(name = "loc_str_key_id_loc_ver_index", columnList = LocalizedString.COLUMN_KEY + "," + LocalizedString.COLUMN_IDENTIFIER + "," + LocalizedString.COLUMN_LOCALE + "," + LocalizedString.COLUMN_VERSION),
-		@Index(name = "loc_str_id_loc_ver_index", columnList = LocalizedString.COLUMN_IDENTIFIER + "," + LocalizedString.COLUMN_LOCALE + "," + LocalizedString.COLUMN_VERSION)
+		@Index(name = "loc_str_id_loc_ver_index", columnList = LocalizedString.COLUMN_IDENTIFIER + "," + LocalizedString.COLUMN_LOCALE + "," + LocalizedString.COLUMN_VERSION),
+		@Index(
+				name = "loc_str_key_id_loc_ver_del_index",
+				columnList = LocalizedString.COLUMN_KEY + "," + LocalizedString.COLUMN_IDENTIFIER + "," + LocalizedString.COLUMN_LOCALE + "," + LocalizedString.COLUMN_VERSION + "," + LocalizedString.COLUMN_DELETED
+		),
+		@Index(name = "loc_str_id_loc_ver_del_index", columnList = LocalizedString.COLUMN_IDENTIFIER + "," + LocalizedString.COLUMN_LOCALE + "," + LocalizedString.COLUMN_VERSION + "," + LocalizedString.COLUMN_DELETED)
 })
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
@@ -64,7 +70,22 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 			query = "select t from LocalizedString t where t.key in (:" + LocalizedString.PARAM_KEY + ") and t.identifier = :" + LocalizedString.PARAM_IDENTIFIER + " and t.locale = :" + LocalizedString.PARAM_LOCALE +
 			" and t.version in (select max(tt.version) from LocalizedString tt where t.key = tt.key and tt.identifier = :" + LocalizedString.PARAM_IDENTIFIER + " and tt.locale = :" + LocalizedString.PARAM_LOCALE +
 			" and tt.deleted = 0) and t.deleted = 0 group by t.key"
-	)
+	),
+	@NamedQuery(
+			name = LocalizedString.FIND_LATEST_MODIFIED_DATE,
+			query = "select max(t.modified) from LocalizedString t where t.identifier = :" + LocalizedString.PARAM_IDENTIFIER + " and t.locale = :" + LocalizedString.PARAM_LOCALE + " and t.deleted = 0"
+	),
+	@NamedQuery(
+			name = LocalizedString.FIND_LATEST_MODIFIED_DATE_BY_KEYS,
+			query = "select t from LocalizedString t where t.key in (:" + LocalizedString.PARAM_KEY + ") and t.identifier = :" + LocalizedString.PARAM_IDENTIFIER + " and t.locale = :" + LocalizedString.PARAM_LOCALE +
+			" and t.modified in (select max(tt.modified) from LocalizedString tt where t.key = tt.key and tt.identifier = :" + LocalizedString.PARAM_IDENTIFIER + " and tt.locale = :" + LocalizedString.PARAM_LOCALE +
+			" and tt.deleted = 0) and t.deleted = 0 group by t.key"
+	),
+	@NamedQuery(
+			name = LocalizedString.GET_ALL_VERSIONS,
+			query = "select t from LocalizedString t where t.key = :" + LocalizedString.PARAM_KEY + " and t.identifier = :" + LocalizedString.PARAM_IDENTIFIER + " and t.locale = :" + LocalizedString.PARAM_LOCALE +
+			" and t.deleted = 0 order by t.version desc"
+	),
 })
 public class LocalizedString implements Serializable {
 
@@ -88,6 +109,9 @@ public class LocalizedString implements Serializable {
 								FIND_ALL_LATEST_BY_IDENTIFIER_AND_LOCALE = "LocalizedString.findAllLatestByIdentifierAndLocale",
 								FIND_ALL_BY_IDENTIFIER_AND_LOCALE_AND_KEY = "LocalizedString.findAllByIdentifierAndLocaleAndKey",
 								FIND_BY_IDENTIFIER_LOCALE_AND_KEYS = "LocalizedString.findByIdentifierLocaleAndKeys",
+								FIND_LATEST_MODIFIED_DATE = "LocalizedString.findLatestModifiedDate",
+								FIND_LATEST_MODIFIED_DATE_BY_KEYS = "LocalizedString.findLatestModifiedStringsByKeys",
+								GET_ALL_VERSIONS = "LocalizedString.getAllVersions",
 
 								PARAM_KEY = "locKey",
 								PARAM_IDENTIFIER = "identifier",
