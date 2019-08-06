@@ -86,6 +86,11 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 			query = "select t from LocalizedString t where t.key = :" + LocalizedString.PARAM_KEY + " and t.identifier = :" + LocalizedString.PARAM_IDENTIFIER + " and t.locale = :" + LocalizedString.PARAM_LOCALE +
 			" and t.deleted = 0 order by t.version desc"
 	),
+	@NamedQuery(
+			name = LocalizedString.GET_LOCALIZED_STRING,
+			query = "select t from LocalizedString t where t.key = :" + LocalizedString.PARAM_KEY + " and t.identifier = :" + LocalizedString.PARAM_IDENTIFIER + " and t.locale = :" + LocalizedString.PARAM_LOCALE +
+			" and t.message = :" + LocalizedString.PARAM_MESSAGE + " and t.deleted = 0 order by t.version desc"
+	)
 })
 public class LocalizedString implements Serializable {
 
@@ -112,10 +117,12 @@ public class LocalizedString implements Serializable {
 								FIND_LATEST_MODIFIED_DATE = "LocalizedString.findLatestModifiedDate",
 								FIND_LATEST_MODIFIED_DATE_BY_KEYS = "LocalizedString.findLatestModifiedStringsByKeys",
 								GET_ALL_VERSIONS = "LocalizedString.getAllVersions",
+								GET_LOCALIZED_STRING = "LocalizedString.getLocalizedString",
 
 								PARAM_KEY = "locKey",
 								PARAM_IDENTIFIER = "identifier",
-								PARAM_LOCALE = "locale";
+								PARAM_LOCALE = "locale",
+								PARAM_MESSAGE = "message";
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -131,7 +138,7 @@ public class LocalizedString implements Serializable {
 	@Column(name = COLUMN_KEY, length = 2000, nullable = false)
 	private String key;
 
-	@Column(name = COLUMN_MESSAGE, length = 21844, nullable = false)
+	@Column(name = COLUMN_MESSAGE, length = 19000, nullable = false)
 	private String message;
 
 	@Column(name = COLUMN_VERSION, nullable = false)

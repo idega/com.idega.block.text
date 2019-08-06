@@ -84,7 +84,7 @@ public class LocalizedStringDAOImpl extends GenericDaoImpl implements LocalizedS
 	}
 
 	private Map<String, String> getCachedLocalizations(String identifier, String locale) {
-		if (StringUtil.isEmpty(identifier) || StringUtil.isEmpty(locale) || !IWMainApplication.getDefaultIWMainApplication().getSettings().getBoolean("db_loc_strings.use_cache", false)) {
+		if (StringUtil.isEmpty(identifier) || StringUtil.isEmpty(locale) || !IWMainApplication.getDefaultIWMainApplication().getSettings().getBoolean("db_loc_strings.cache", true)) {
 			return null;
 		}
 
@@ -166,13 +166,17 @@ public class LocalizedStringDAOImpl extends GenericDaoImpl implements LocalizedS
 		}
 
 		Map<String, String> converted = new TreeMap<>();
-		for (LocalizedString ls: localizedStrings) {
-			String key = ls.getKey();
-			if (StringUtil.isEmpty(key)) {
-				continue;
-			}
+		try {
+			for (LocalizedString ls: localizedStrings) {
+				String key = ls.getKey();
+				if (StringUtil.isEmpty(key)) {
+					continue;
+				}
 
-			converted.put(key, ls.getMessage());
+				converted.put(key, ls.getMessage());
+			}
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Error converting " + localizedStrings + " to " + converted.getClass().getName(), e);
 		}
 
 		return converted;
@@ -426,6 +430,32 @@ public class LocalizedStringDAOImpl extends GenericDaoImpl implements LocalizedS
 			return strings;
 		} catch (Exception e) {
 			getLogger().log(Level.WARNING, "Error getting all versions for key " + key + " from " + identifier + " by " + locale, e);
+		}
+
+		return null;
+	}
+
+	@Override
+	public LocalizedString getLocalizedString(String key, String identifier, String locale, String message) {
+		if (StringUtil.isEmpty(key) || StringUtil.isEmpty(identifier) || StringUtil.isEmpty(locale) || StringUtil.isEmpty(message)) {
+			return null;
+		}
+
+		try {
+			List<LocalizedString> results = getResultList(
+					LocalizedString.GET_LOCALIZED_STRING,
+					LocalizedString.class,
+					0,
+					1,
+					null,
+					new Param(LocalizedString.PARAM_KEY, key),
+					new Param(LocalizedString.PARAM_IDENTIFIER, identifier),
+					new Param(LocalizedString.PARAM_LOCALE, locale),
+					new Param(LocalizedString.PARAM_MESSAGE, message)
+			);
+			return ListUtil.isEmpty(results) ? null : results.iterator().next();
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Error getting localized string for key " + key + " from " + identifier + " by " + locale + " and message " + message, e);
 		}
 
 		return null;

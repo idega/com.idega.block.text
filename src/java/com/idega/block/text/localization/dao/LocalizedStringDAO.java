@@ -29,4 +29,6 @@ public interface LocalizedStringDAO extends GenericDao {
 
 	public List<LocalizedString> getAllVersionsOfLocalizedString(String key, String identifier, String locale);
 
+	public LocalizedString getLocalizedString(String key, String identifier, String locale, String message);
+
 }
