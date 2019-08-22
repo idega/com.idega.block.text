@@ -10,6 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Index;
+import javax.persistence.Lob;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.PrePersist;
@@ -23,7 +24,6 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 		@Index(name = "loc_str_identifier_index", columnList = LocalizedString.COLUMN_IDENTIFIER),
 		@Index(name = "loc_str_locale_index", columnList = LocalizedString.COLUMN_LOCALE),
 		@Index(name = "loc_str_key_index", columnList = LocalizedString.COLUMN_KEY),
-		@Index(name = "loc_str_message_index", columnList = LocalizedString.COLUMN_MESSAGE),
 		@Index(name = "loc_str_version_index", columnList = LocalizedString.COLUMN_VERSION),
 		@Index(name = "loc_str_key_id_loc_index", columnList = LocalizedString.COLUMN_KEY + "," + LocalizedString.COLUMN_IDENTIFIER + "," + LocalizedString.COLUMN_LOCALE),
 		@Index(name = "loc_str_key_id_loc_del_index", columnList = LocalizedString.COLUMN_KEY + "," + LocalizedString.COLUMN_IDENTIFIER + "," + LocalizedString.COLUMN_LOCALE + "," + LocalizedString.COLUMN_DELETED),
@@ -135,10 +135,11 @@ public class LocalizedString implements Serializable {
 	@Column(name = COLUMN_LOCALE, nullable = false)
 	private String locale;
 
-	@Column(name = COLUMN_KEY, length = 2000, nullable = false)
+	@Column(name = COLUMN_KEY, length = 255, nullable = false)
 	private String key;
 
-	@Column(name = COLUMN_MESSAGE, length = 19000, nullable = false)
+	@Lob
+	@Column(name = COLUMN_MESSAGE, length = 16383, nullable = false)
 	private String message;
 
 	@Column(name = COLUMN_VERSION, nullable = false)
