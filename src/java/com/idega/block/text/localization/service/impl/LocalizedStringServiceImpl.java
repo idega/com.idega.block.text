@@ -123,6 +123,7 @@ public class LocalizedStringServiceImpl extends DefaultSpringBean implements Loc
 
 				Map<String, LocalizedString> lastModifications = null;
 				List<LocalizedString> lastModifiedStrings = localizedStringDAO.getLastModifiedStrings(new ArrayList<>(keys), identifier, locale);
+				Map<String, Boolean> skipKeys = new HashMap<>();
 				if (!ListUtil.isEmpty(lastModifiedStrings)) {
 					lastModifications = new HashMap<>();
 					for (LocalizedString ls: lastModifiedStrings) {
@@ -130,6 +131,9 @@ public class LocalizedStringServiceImpl extends DefaultSpringBean implements Loc
 						if (lastModifiedLocalizedString != null && lastModified >= 0 && lastModified > lastModifiedLocalizedString.getTime()) {
 							//	Current string was changed in DB before localization file was changed - will need to compare translations to make sure latest version is used
 							lastModifications.put(ls.getKey(), ls);
+						} else {
+							//	Current string was changed in DB after localization file was changes - no need to update localization in DB
+							skipKeys.put(ls.getKey(), Boolean.TRUE);
 						}
 					}
 				}
@@ -141,7 +145,7 @@ public class LocalizedStringServiceImpl extends DefaultSpringBean implements Loc
 					if (results.containsKey(key) || keysToSkip.containsKey(key)) {
 						continue;
 					}
-					String message = resource.getMessage(key);
+					String message = resource.getMessage(key, false);
 					if (StringUtil.isEmpty(message) || key.equals(message)) {
 						continue;
 					}
@@ -159,6 +163,10 @@ public class LocalizedStringServiceImpl extends DefaultSpringBean implements Loc
 								lastModifiedLocalizedString = existingVersion.getModified();
 								skipKey = true;
 							}
+						}
+					} else {
+						if (skipKeys.containsKey(key)) {
+							skipKey = true;
 						}
 					}
 					if (skipKey) {
