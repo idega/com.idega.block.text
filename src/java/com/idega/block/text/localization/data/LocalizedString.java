@@ -14,10 +14,15 @@ import javax.persistence.Lob;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.PrePersist;
+import javax.persistence.PreRemove;
+import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+
+import com.idega.presentation.IWContext;
+import com.idega.util.CoreUtil;
 
 @Entity
 @Table(name = LocalizedString.ENTITY_NAME, indexes = {
@@ -107,6 +112,7 @@ public class LocalizedString implements Serializable {
 								COLUMN_DELETED = "deleted",
 								COLUMN_DELETED_WHEN = "deleted_when",
 								COLUMN_DELETED_BY = "deleted_by",
+								COLUMN_MODIFIED_BY = "modified_by",
 
 								FIND_BY_IDENTIFIER_KEY_LOCALE = "LocalizedString.findByIdentifierKeyLocale",
 								FIND_MESSAGE_BY_IDENTIFIER_KEY_LOCALE = "LocalizedString.findMessageByIdentifierKeyLocale",
@@ -157,6 +163,9 @@ public class LocalizedString implements Serializable {
 	@Column(name = COLUMN_DELETED_BY)
 	private Integer deletedBy;
 
+	@Column(name = COLUMN_MODIFIED_BY)
+	private Integer modifiedBy;
+
 	public LocalizedString() {
 		super();
 	}
@@ -171,13 +180,38 @@ public class LocalizedString implements Serializable {
 		this.version = version;
 	}
 
+	private Integer getCurrentUserId() {
+		try {
+			IWContext iwc = CoreUtil.getIWContext();
+			return iwc != null && iwc.isLoggedOn() ? iwc.getCurrentUserId() : -1;
+		} catch (Throwable t) {}
+		return -1;
+	}
+
+	@PreRemove
+	public void preRemove() {
+		if (deletedWhen == null) {
+			deletedWhen = new Timestamp(System.currentTimeMillis());
+		}
+		if (deleted == null) {
+			deleted = Boolean.TRUE;
+		}
+		if (deletedBy == null) {
+			deletedBy = getCurrentUserId();
+		}
+	}
+
 	@PrePersist
+	@PreUpdate
 	public void prePersist() {
 		if (modified == null) {
 			modified = new Timestamp(System.currentTimeMillis());
 		}
 		if (deleted == null) {
 			deleted = Boolean.FALSE;
+		}
+		if (modifiedBy == null) {
+			modifiedBy = getCurrentUserId();
 		}
 	}
 
