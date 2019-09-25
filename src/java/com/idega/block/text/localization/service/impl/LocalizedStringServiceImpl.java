@@ -40,6 +40,8 @@ import com.idega.util.messages.MessageResourceFactory;
 @Scope(BeanDefinition.SCOPE_SINGLETON)
 public class LocalizedStringServiceImpl extends DefaultSpringBean implements LocalizedStringService, ApplicationListener<IWMainApplicationStartedEvent> {
 
+	private static final String PROP_LOCALIZATIONS_SOURCES = "localizations.sources";
+
 	@Autowired
 	private MessageResourceFactory messageResourceFactory;
 
@@ -186,9 +188,17 @@ public class LocalizedStringServiceImpl extends DefaultSpringBean implements Loc
 		return null;
 	}
 
+	private String getSources(IWMainApplication iwma) {
+		return iwma.getSettings().getProperty(PROP_LOCALIZATIONS_SOURCES);
+	}
+
 	@Override
 	public void onApplicationEvent(IWMainApplicationStartedEvent event) {
-		doImportLocalizations(event.getIWMA());
+		IWMainApplication iwma = event.getIWMA();
+		boolean importLocalizations = StringUtil.isEmpty(getSources(iwma)) || iwma.getSettings().getBoolean("localizations.import_into_db_on_startup", true);
+		if (importLocalizations) {
+			doImportLocalizations(iwma);
+		}
 	}
 
 	private void doImportLocalizations(IWMainApplication iwma) {
@@ -204,8 +214,7 @@ public class LocalizedStringServiceImpl extends DefaultSpringBean implements Loc
 			}
 
 			List<String> sources = null;
-			String propName = "localizations.sources";
-			String propValue = iwma.getSettings().getProperty(propName);
+			String propValue = getSources(iwma);
 			if (!StringUtil.isEmpty(propValue)) {
 				sources = Arrays.asList(propValue.split(CoreConstants.COMMA));
 			}
@@ -240,7 +249,7 @@ public class LocalizedStringServiceImpl extends DefaultSpringBean implements Loc
 
 			if (propValue == null) {
 				propValue = IWResourceBundle.RESOURCE_IDENTIFIER.concat(CoreConstants.COMMA).concat(JarLoadedResourceBundle.RESOURCE_IDENTIFIER);
-				iwma.getSettings().setProperty(propName, propValue);
+				iwma.getSettings().setProperty(PROP_LOCALIZATIONS_SOURCES, propValue);
 			}
 		} catch (Exception e) {
 			getLogger().log(Level.WARNING, "Error importing all localizations into " + DatabaseResourceBundle.class.getName(), e);
