@@ -140,6 +140,11 @@ public class DatabaseResourceBundle extends IWResourceBundle implements MessageR
 
 	@Override
 	public String getMessage(String key) {
+		return getMessage(key, true);
+	}
+
+	@Override
+	public String getMessage(String key, boolean loadDefaultLocalization) {
 		return getLocalizedString(key);
 	}
 
