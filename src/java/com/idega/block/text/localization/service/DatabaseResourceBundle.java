@@ -98,7 +98,11 @@ public class DatabaseResourceBundle extends IWResourceBundle implements MessageR
 
 	@Override
 	public void storeState() {
-		Map<String, String> toSave = MapUtil.isEmpty(recentChanges) ? getLookup() : recentChanges;
+		if (MapUtil.isEmpty(recentChanges)) {
+			return;
+		}
+
+		Map<String, String> toSave = recentChanges;
 		getLocalizedStringDAO().setLocalizedStrings(toSave, getBundleIdentifier(), getLocale().toString());
 		recentChanges.clear();
 	}
