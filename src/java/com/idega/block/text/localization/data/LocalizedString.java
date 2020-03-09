@@ -63,7 +63,7 @@ import com.idega.util.CoreUtil;
 			name = LocalizedString.FIND_ALL_LATEST_BY_IDENTIFIER_AND_LOCALE,
 			query = "select t from LocalizedString t where t.identifier = :" + LocalizedString.PARAM_IDENTIFIER + " and t.locale = :" + LocalizedString.PARAM_LOCALE + " and t.version in " +
 			"(select max(tt.version) from LocalizedString tt where t.key = tt.key and tt.identifier = :" + LocalizedString.PARAM_IDENTIFIER + " and tt.locale = :" + LocalizedString.PARAM_LOCALE +
-			" and tt.deleted = 0) and t.deleted = 0 group by t.key"
+			" and tt.deleted = 0) and t.deleted = 0"
 	),
 	@NamedQuery(
 			name = LocalizedString.FIND_ALL_BY_IDENTIFIER_AND_LOCALE_AND_KEY,
@@ -74,7 +74,7 @@ import com.idega.util.CoreUtil;
 			name = LocalizedString.FIND_BY_IDENTIFIER_LOCALE_AND_KEYS,
 			query = "select t from LocalizedString t where t.key in (:" + LocalizedString.PARAM_KEY + ") and t.identifier = :" + LocalizedString.PARAM_IDENTIFIER + " and t.locale = :" + LocalizedString.PARAM_LOCALE +
 			" and t.version in (select max(tt.version) from LocalizedString tt where t.key = tt.key and tt.identifier = :" + LocalizedString.PARAM_IDENTIFIER + " and tt.locale = :" + LocalizedString.PARAM_LOCALE +
-			" and tt.deleted = 0) and t.deleted = 0 group by t.key"
+			" and tt.deleted = 0) and t.deleted = 0"
 	),
 	@NamedQuery(
 			name = LocalizedString.FIND_LATEST_MODIFIED_DATE,
@@ -84,7 +84,7 @@ import com.idega.util.CoreUtil;
 			name = LocalizedString.FIND_LATEST_MODIFIED_DATE_BY_KEYS,
 			query = "select t from LocalizedString t where t.key in (:" + LocalizedString.PARAM_KEY + ") and t.identifier = :" + LocalizedString.PARAM_IDENTIFIER + " and t.locale = :" + LocalizedString.PARAM_LOCALE +
 			" and t.modified in (select max(tt.modified) from LocalizedString tt where t.key = tt.key and tt.identifier = :" + LocalizedString.PARAM_IDENTIFIER + " and tt.locale = :" + LocalizedString.PARAM_LOCALE +
-			" and tt.deleted = 0) and t.deleted = 0 group by t.key"
+			" and tt.deleted = 0) and t.deleted = 0"
 	),
 	@NamedQuery(
 			name = LocalizedString.GET_ALL_VERSIONS,
@@ -141,7 +141,7 @@ public class LocalizedString implements Serializable {
 	@Column(name = COLUMN_LOCALE, nullable = false)
 	private String locale;
 
-	@Column(name = COLUMN_KEY, length = 8192, nullable = false)
+	@Column(name = COLUMN_KEY, length = 4000, nullable = false)
 	private String key;
 
 	@Lob
