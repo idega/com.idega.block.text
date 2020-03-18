@@ -23,6 +23,7 @@ import com.idega.block.text.localization.service.LocalizedStringService;
 import com.idega.core.business.DefaultSpringBean;
 import com.idega.core.localisation.business.ICLocaleBusiness;
 import com.idega.core.localisation.data.ICLocale;
+import com.idega.idegaweb.DefaultIWBundle;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWMainApplicationStartedEvent;
@@ -197,7 +198,9 @@ public class LocalizedStringServiceImpl extends DefaultSpringBean implements Loc
 		IWMainApplication iwma = event.getIWMA();
 		boolean importLocalizations = StringUtil.isEmpty(getSources(iwma)) || iwma.getSettings().getBoolean("localizations.import_into_db_on_startup", true);
 		if (importLocalizations) {
-			doImportLocalizations(iwma);
+			if (DefaultIWBundle.isProductionEnvironment()) {
+				doImportLocalizations(iwma);
+			}
 		}
 	}
 

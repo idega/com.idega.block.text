@@ -15,6 +15,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import com.idega.block.text.localization.dao.LocalizedStringDAO;
+import com.idega.idegaweb.DefaultIWBundle;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.util.StringUtil;
@@ -53,7 +54,7 @@ public class DatabaseResourceBundle extends IWResourceBundle implements MessageR
 	@Override
 	protected void initProperities() {
 		setIdentifier(RESOURCE_IDENTIFIER);
-		setLevel(MessageResourceImportanceLevel.FIRST_ORDER);
+		setLevel(DefaultIWBundle.isProductionEnvironment() ? MessageResourceImportanceLevel.FIRST_ORDER : MessageResourceImportanceLevel.OFF);
 		setAutoInsert(true);
 	}
 
@@ -61,7 +62,9 @@ public class DatabaseResourceBundle extends IWResourceBundle implements MessageR
 	public void initialize(String bundleIdentifier, Locale locale, long lastModified) throws IOException {
 		setLocale(locale);
 		setBundleIdentifier(bundleIdentifier);
-		getLookup();
+		if (DefaultIWBundle.isProductionEnvironment()) {
+			getLookup();
+		}
 		this.lastModified = lastModified;
 	}
 
