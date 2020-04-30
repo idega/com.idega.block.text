@@ -10,4 +10,6 @@ public interface LocalizedStringService {
 
 	public Map<String, String> getLocalizations(Set<String> keys, String identifier, String locale, List<String> sources);
 
+	public Boolean doImportLocalizations(String bundleIdentifier, String localeKey, String file);
+
 }
