@@ -334,7 +334,7 @@ public class LocalizedStringServiceImpl extends DefaultSpringBean implements Loc
 				key = StringConverterUtility.loadConvert(key);
 
 				String value = lineInUTF8.substring(splitter + CoreConstants.EQ.length());
-				if (StringUtil.isEmpty(key) || value == null) {
+				if (StringUtil.isEmpty(key) || StringUtil.isEmpty(value)) {
 					continue;
 				}
 
