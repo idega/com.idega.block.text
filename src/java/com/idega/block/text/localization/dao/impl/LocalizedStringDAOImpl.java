@@ -298,7 +298,6 @@ public class LocalizedStringDAOImpl extends GenericDaoImpl implements LocalizedS
 		Integer version = null;
 		LocalizedString ls = null;
 		try {
-			Integer version = null;
 			if (latestLS == null) {
 				version = 1;
 
@@ -314,8 +313,8 @@ public class LocalizedStringDAOImpl extends GenericDaoImpl implements LocalizedS
 
 			ls = new LocalizedString(identifier, locale, key, message, version);
 			persist(ls);
-		} catch (Exception e) {
-			getLogger().log(Level.WARNING, "Error setting localized string '" + message + "' for " + locale + " from " + identifier + " for " + key + ". Latest localization: " + latestLS, e);
+		} catch (Throwable e) {
+			getLogger().log(Level.WARNING, "Error setting localized string '" + message + "' for " + locale + " from " + identifier + " for " + key + " version " + version + ". Latest localization: " + latestLS, e);
 		} finally {
 			if (ls != null) {
 				addToCache(identifier, locale, key, message);

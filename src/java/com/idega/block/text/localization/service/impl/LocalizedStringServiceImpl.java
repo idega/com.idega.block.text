@@ -285,6 +285,7 @@ public class LocalizedStringServiceImpl extends DefaultSpringBean implements Loc
 			return null;
 		}
 
+		Map<String, String> localizations = null;
 		try {
 			IWContext iwc = CoreUtil.getIWContext();
 			if (iwc == null || !iwc.isSuperAdmin()) {
@@ -313,7 +314,7 @@ public class LocalizedStringServiceImpl extends DefaultSpringBean implements Loc
 				return Boolean.FALSE;
 			}
 
-			Map<String, String> localizations = new HashMap<>();
+			localizations = new HashMap<>();
 			for (String line: lines) {
 				if (StringUtil.isEmpty(line)) {
 					continue;
@@ -350,8 +351,8 @@ public class LocalizedStringServiceImpl extends DefaultSpringBean implements Loc
 			getLogger().info("Imported " + localizations.size() + " localization(s) from " + file + " to " + bundleIdentifier + " for " + localeKey);
 			CoreUtil.clearAllCaches();
 			return Boolean.TRUE;
-		} catch (Exception e) {
-			getLogger().log(Level.WARNING, "Error importing localizations from " + file + " into " + bundleIdentifier, e);
+		} catch (Throwable e) {
+			getLogger().log(Level.WARNING, "Error importing localizations " + localizations + " from " + file + " into " + bundleIdentifier + " for " + localeKey, e);
 		} finally {
 			importInProgress = false;
 		}
