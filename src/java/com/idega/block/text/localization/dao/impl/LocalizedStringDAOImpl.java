@@ -278,6 +278,24 @@ public class LocalizedStringDAOImpl extends GenericDaoImpl implements LocalizedS
 
 	@Transactional(readOnly = false)
 	private void setLocalizedString(LocalizedString latestLS, String key, String message, String identifier, String locale) {
+		if (StringUtil.isEmpty(key)) {
+			getLogger().warning("Key is unknown, can not insert message '" + message + "' for " + locale + " from " + identifier);
+			return;
+		}
+		if (message == null) {
+			getLogger().warning("Message is unknown, can not insert message for " + locale + " from " + identifier + " for " + key);
+			return;
+		}
+		if (StringUtil.isEmpty(identifier)) {
+			getLogger().warning("Identifier is unknown, can not insert message '" + message + "' for " + locale + " for " + key);
+			return;
+		}
+		if (StringUtil.isEmpty(locale)) {
+			getLogger().warning("Locale is unknown, can not insert message '" + message + " from " + identifier + " for " + key);
+			return;
+		}
+
+		Integer version = null;
 		LocalizedString ls = null;
 		try {
 			Integer version = null;
