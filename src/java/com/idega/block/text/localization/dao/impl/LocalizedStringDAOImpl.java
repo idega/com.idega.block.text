@@ -330,18 +330,28 @@ public class LocalizedStringDAOImpl extends GenericDaoImpl implements LocalizedS
 		}
 
 		List<String> keys = new ArrayList<>(localizations.keySet());
-		List<LocalizedString> existingLocalizations = getLocalizedStringsEntities(identifier, locale, keys);
 		Map<String, LocalizedString> groupedExistingLocalizations = new HashMap<>();
-		if (!ListUtil.isEmpty(existingLocalizations)) {
-			for (LocalizedString ls: existingLocalizations) {
-				groupedExistingLocalizations.put(ls.getKey(), ls);
+		try {
+			List<LocalizedString> existingLocalizations = getLocalizedStringsEntities(identifier, locale, keys);
+			if (!ListUtil.isEmpty(existingLocalizations)) {
+				for (LocalizedString ls: existingLocalizations) {
+					groupedExistingLocalizations.put(ls.getKey(), ls);
+				}
 			}
+		} catch (Throwable t) {
+			getLogger().log(Level.WARNING, "Error getting existing localizations for " + locale + " from " + identifier + " by " + keys, t);
 		}
 
 		Map<String, String> copy = new HashMap<>(localizations);
 		for (String key: keys) {
 			LocalizedString latestLS = groupedExistingLocalizations.get(key);
-			setLocalizedString(latestLS, key, copy.get(key), identifier, locale);
+			String message = null;
+			try {
+				message = copy.get(key);
+				setLocalizedString(latestLS, key, message, identifier, locale);
+			} catch (Throwable t) {
+				getLogger().log(Level.WARNING, "Error setting localized string '" + message + "' from " + identifier + " for " + key + " and " + locale, t);
+			}
 		}
 
 		addToCache(identifier, locale, localizations);
