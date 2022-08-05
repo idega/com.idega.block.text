@@ -13,12 +13,15 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 
 import com.idega.block.text.data.LocalizedTextBMPBean;
 import com.idega.block.text.model.LocalizedTextModel;
 import com.idega.core.localisation.data.bean.ICLocale;
 import com.idega.util.DBUtil;
+import com.idega.util.IWTimestamp;
 
 @Entity
 @Table(name = LocalizedText.TABLE_NAME)
@@ -65,6 +68,16 @@ public class LocalizedText implements Serializable, LocalizedTextModel {
 
 		this.locale = locale;
 		this.body = body;
+	}
+
+	@PrePersist
+	@PreUpdate
+	public void prePersist() {
+		Timestamp now = IWTimestamp.RightNow().getTimestamp();
+		if (created == null) {
+			created = now;
+		}
+		updated = now;
 	}
 
 	public Integer getId() {
